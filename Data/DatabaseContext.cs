@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using HotelLstWebApi.Configurations.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,57 +8,16 @@ using System.Threading.Tasks;
 
 namespace HotelLstWebApi.Data
 {
-    public class DatabaseContext:DbContext
+    public class DatabaseContext:IdentityDbContext<ApiUsers>
     {
         public DatabaseContext(DbContextOptions options):base(options)
         {}
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Country>().HasData
-                (
-                new Country
-                {
-                    Id=1,
-                    Name="Jamaica",
-                    ShortName="JM"
-                },
-                new Country
-                {
-                    Id = 2,
-                    Name = "Bahamas",
-                    ShortName = "BS"
-                },
-                new Country
-                {
-                    Id = 3,
-                    Name = "Cayman Island",
-                    ShortName = "CI"
-                });
-            builder.Entity<Hotel>().HasData(
-                new Hotel
-                {
-                    Id = 1,
-                    Name = "Sandals Resort and Spa",
-                    Address = "Negril",
-                    CountryId=1,
-                    Rating=4.5
-                },
-                new Hotel
-                {
-                    Id = 2,
-                    Name = "Comfort Suits",
-                    Address = "abc",
-                    CountryId = 3,
-                    Rating = 3.5
-                },
-                new Hotel
-                {
-                    Id = 3,
-                    Name = "Spa",
-                    Address = "Negril",
-                    CountryId = 3,
-                    Rating = 4.0
-                });
+            base.OnModelCreating(builder);            
+            builder.ApplyConfiguration(new HotelConfiguration());
+            builder.ApplyConfiguration(new CountryConfiguration());
+            builder.ApplyConfiguration(new RoleConfiguration());
         }
         public DbSet<Country> Countries { get; set; }
         public DbSet<Hotel> Hotels { get; set; }

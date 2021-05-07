@@ -29,4 +29,8 @@ namespace HotelLstWebApi.Models
         public int Id { get; set; }
         public CountryDTO Country { get; set; }
     }
+    public class UpdateHotelDTO : CreateHotelDTO
+    {
+        
+    }
 }

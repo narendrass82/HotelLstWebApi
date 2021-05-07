@@ -1,9 +1,11 @@
 using HotelLstWebApi.Data;
 using HotelLstWebApi.IRepository;
 using HotelLstWebApi.Repository;
+using HotelLstWebApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,7 +35,10 @@ namespace HotelLstWebApi
 
             services.AddDbContext<DatabaseContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("sqlConnection")));
-
+            
+            services.AddAuthentication();
+            services.ConfigureIdentity();
+            services.ConfigureJWT(Configuration);
             services.AddCors(o=> 
             {
                 o.AddPolicy("AllowAll", builder =>
@@ -44,6 +49,7 @@ namespace HotelLstWebApi
 
             services.AddAutoMapper(typeof(Configurations.MapperInitializer));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IAuthManager, AuthManager>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "HotelLstWebApi", Version = "v1" });
@@ -66,6 +72,7 @@ namespace HotelLstWebApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
